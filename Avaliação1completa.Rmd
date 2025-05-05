@@ -1,0 +1,115 @@
+---
+title: "🌍 Análise da Taxa de Natalidade"
+author: "Vitor Valmor Possamai Schramm"
+output: html_document
+---
+**A Taxa de Natalidade é um indicador demográfico que mede o número de nascimentos vivos em uma população durante um determinado período (geralmente um ano), em relação a cada 1.000 habitantes.  
+Ela é usada para analisar o crescimento populacional e entender dinâmicas sociais, econômicas e de saúde pública. Quer que eu também explique como ela difere da taxa de fecundidade?**
+
+
+```{r setup, include=FALSE, echo=FALSE, warning=FALSE}
+# Carregar pacotes
+library(WDI)
+library(tidyverse)
+library(viridis)
+
+# Configurações globais
+options(scipen = 999)
+
+# Top 10 países mais populosos
+top10_paises <- c("CN", "IN", "US", "ID", "PK", "BR", "NG", "BD", "RU", "MX")
+
+# Dados
+TaxaNatalidadeBruta <- WDI(country = top10_paises, indicator = 'SP.DYN.CBRT.IN')
+TaxaNatalidadeBruta2021 <- WDI(country = top10_paises, indicator = 'SP.DYN.CBRT.IN', start = 2021, end = 2021)
+TaxaNatalidadeBrutaBR <- WDI(country = "BR", indicator = 'SP.DYN.CBRT.IN')
+```
+
+Este gráfico mostra como a taxa de natalidade bruta evoluiu ao longo dos anos nos 10 países mais populosos do mundo. Cada célula colorida indica a intensidade da taxa para um país em um determinado ano, permitindo observar tendências e comparações.
+
+Fonte: Biblioteca WDI
+```{r, echo=FALSE, warning=FALSE}
+# Melhorar a paleta
+paleta_mod <- scale_fill_viridis(name = "Taxa de Natalidade", option = "D", direction = -1)
+
+# Gráfico mais apresentável
+grafpainel <- ggplot(TaxaNatalidadeBruta, aes(x = year, y = country, fill = SP.DYN.CBRT.IN)) +
+  geom_tile(color = "white", size = 0.1) +  # Linhas brancas entre blocos
+  paleta_mod +
+  theme_minimal(base_size = 13) +
+  labs(
+    title = "🌍 Evolução da Taxa de Natalidade",
+    subtitle = "Top 10 países mais populosos - Dados do Banco Mundial",
+    x = "Ano", y = "País"
+  ) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5),   # Centralizar título
+    plot.subtitle = element_text(size = 13, hjust = 0.5, color = "gray30"),
+    axis.title = element_text(face = "bold"),
+    axis.text.y = element_text(face = "bold", color = "black"),          # Países em negrito
+    axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1),
+    panel.grid.major.x = element_blank(),    # Tirar grades verticais
+    panel.grid.minor = element_blank(),
+    legend.position = "bottom",              # Legenda embaixo
+    legend.key.width = unit(2, "cm")          # Aumentar largura da legenda
+  )
+
+grafpainel
+
+
+```
+
+
+
+Este gráfico de barras compara a taxa de natalidade bruta entre os 10 países mais populosos no ano de 2021. A orientação horizontal facilita visualizar rapidamente quais países registraram as maiores e menores taxas naquele ano específico.
+
+Fonte: Biblioteca WDI
+```{r, echo=FALSE, warning=FALSE}
+# Gráfico 2
+graficocorte <- ggplot(TaxaNatalidadeBruta2021,
+                       aes(x = reorder(country, SP.DYN.CBRT.IN),
+                           y = SP.DYN.CBRT.IN,
+                           fill = SP.DYN.CBRT.IN)) +
+  geom_bar(stat = "identity") +
+  paleta_mod +
+  coord_flip() +
+  theme_minimal(base_size = 12) +
+  labs(
+    title = "📊 Taxa de Natalidade Bruta (2021) 
+    Top 10 Países Mais Populosos",
+    subtitle = "Cores modernas (viridis)",
+    x = "País", y = "Taxa de Natalidade"
+  ) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    plot.subtitle = element_text(size = 11)
+  )
+
+graficocorte
+
+```
+
+Focado apenas no Brasil, este gráfico mostra a evolução da taxa de natalidade bruta entre 1960 e 2023. A linha verde tracejada e os pontos dourados destacam a tendência de queda no número de nascimentos ao longo das últimas décadas.
+
+Fonte: Biblioteca WDI
+
+```{r, echo=FALSE, warning=FALSE}
+# Gráfico 3
+graficoserie <- ggplot(TaxaNatalidadeBrutaBR, aes(x = year, y = SP.DYN.CBRT.IN)) +
+  geom_line(color = "darkgreen", size = 1.2, linetype = "dashed") +
+  geom_point(size = 3.5, color = "gold", shape = 21, fill = "gold", stroke = 1) +
+  theme_classic(base_size = 12) +
+  labs(
+    title = "📉 Evolução da Taxa de Natalidade no Brasil (1960–2023)",
+    subtitle = "Linha tracejada verde e pontos amarelos para o Brasil",
+    x = "Ano", y = "Taxa de Natalidade"
+  ) +
+  theme(
+    plot.title = element_text(size = 16, face = "bold", color = "darkgreen"),
+    plot.subtitle = element_text(size = 11, color = "#666")
+  )
+
+graficoserie
+
+```
+
