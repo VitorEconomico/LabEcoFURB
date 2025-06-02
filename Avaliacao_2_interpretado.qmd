@@ -1,0 +1,111 @@
+---
+title: "Taxa de câmbio - Livre - Dólar americano (venda) - diário"
+author: "Vitor Valmor Possamai Schramm"
+format: 
+  html:
+    code-fold: true
+    code-tools: false
+editor: visual
+---
+
+## Dólar Comercial - Venda (Fonte: Banco Central do Brasil)
+
+Este gráfico mostra a variação diária da taxa de câmbio do dólar comercial (venda) desde janeiro de 2020 até a data atual. A animação permite visualizar a evolução temporal da moeda americana frente ao real.
+
+```{r setup, include=FALSE}
+# Carregar pacotes necessários
+library(GetBCBData)
+library(ggplot2)
+library(gganimate)
+library(transformr)
+library(gifski)
+```
+
+```{r dados, include=FALSE}
+# Código da série: Dólar - venda (livre)
+id_dolar <- 1
+
+# Baixar dados do Banco Central
+df_dolar <- gbcbd_get_series(id = id_dolar,
+                             first.date = '2020-01-01',
+                             last.date = Sys.Date(),
+                             format.data = 'long',
+                             use.memoise = TRUE,
+                             cache.path = tempdir(),
+                             do.parallel = FALSE)
+```
+
+```{r grafico_animado, echo=FALSE}
+library(ggplot2)
+library(gganimate)
+library(transformr)
+
+grafico_animado <- ggplot(df_dolar, aes(x = ref.date, y = value)) +
+  geom_line(color = "#0072B2", linewidth = 1.2) +
+  geom_point(color = "#D55E00", size = 1.5, alpha = 0.7) +
+  labs(
+    title = "Variação da Taxa de Câmbio - Dólar (Venda)",
+    subtitle = "De janeiro de 2020 até {frame_along}",
+    x = "Data",
+    y = "Valor (R$)",
+    caption = "Fonte: Banco Central do Brasil via GetBCBData"
+  ) +
+  theme_light(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18),
+    plot.subtitle = element_text(size = 14, margin = margin(b = 10)),
+    plot.caption = element_text(size = 10),
+    axis.title = element_text(face = "bold")
+  ) +
+  transition_reveal(ref.date)
+
+grafico_animado
+```
+
+```{r salvar_gif, include=FALSE}
+# (Opcional) Salvar como GIF
+# anim_save("dolar_animado.gif", grafico_animado)
+```
+
+## 📊 O que esse gráfico realmente nos conta?
+
+Mais do que números, ele revela a **montanha-russa econômica que o Brasil enfrentou desde 2020**. Cada pico e queda da linha do câmbio carrega um capítulo da nossa história recente. Veja só:
+
+### 🦠 **O mundo parou... e o dólar disparou**
+
+**(Março a Maio de 2020 – quase R\$6,00)**\
+A pandemia chegou e derrubou a economia global. No Brasil, a incerteza política somada ao pânico mundial fez o dólar disparar. Foi o **maior pico da série histórica** — reflexo da fuga de capitais e da queda vertiginosa dos juros.
+
+### 📉 **Reação e alívio: o dólar recua**
+
+**(2º semestre de 2020 – queda até \~R\$5,00)**\
+Com medidas emergenciais e exportações crescendo, o Brasil respirou. A cotação caiu, mas ainda longe dos níveis pré-pandemia. Um alívio temporário, porém bem-vindo.
+
+### 🏛️ **Crise fiscal e política: a instabilidade volta**
+
+**(2021 – novos picos acima de R\$5,70)**\
+Discussões sobre o teto de gastos, trocas na Petrobras e CPI da COVID deixaram o mercado em alerta. Resultado? O dólar subiu com força, espelhando o temor sobre a condução econômica do país.
+
+### 🌾 **Commodities salvam o real (por um tempo)**
+
+**(Início de 2022 – queda para \~R\$4,60)**\
+Com soja, minério e petróleo em alta, o Brasil recebeu dólares aos montes. A Selic subindo também atraiu investidores. O real se valorizou — **uma janela de otimismo**.
+
+### 🗳️ **Ano eleitoral: tensão no ar, dólar em alta**
+
+**(2º semestre de 2022 – picos \~R\$5,40)**\
+A disputa acirrada entre Lula e Bolsonaro trouxe mais incertezas. Investidores adotaram cautela, e a cotação reagiu com força. O gráfico marca bem esse período: **valores instáveis e imprevisíveis**.
+
+### 📉 **Novo governo, nova trégua**
+
+**(Início de 2023 – queda abaixo de R\$5,00)**\
+A formação do novo governo e a continuidade da política de juros altos ajudaram a acalmar o mercado. O real voltou a se fortalecer — **mas por pouco tempo**.
+
+### 🌍 **2024–2025: o dólar busca equilíbrio em um mundo incerto**
+
+**(Oscilando entre R\$5,10 e R\$5,30)**\
+Com inflação global persistente, juros altos nos EUA e dúvidas fiscais internas, o dólar encontrou um novo “piso” instável. **Não há crise aguda, mas há ruído suficiente para manter o câmbio pressionado**.
+
+### 🔚 **O gráfico como espelho da confiança**
+
+A cada salto ou queda, vemos como o Brasil é sensível à política, à economia global e às próprias decisões internas. Esse gráfico é mais do que uma curva: **é um retrato da credibilidade e da confiança na economia brasileira**.
